@@ -1,5 +1,7 @@
+import { TextInputField } from "evergreen-ui";
 import { Link } from "react-router-dom";
 import auth from "../assets/auth.svg";
+// import { emailRegex, passRegex } from "../utils/Regex";
 
 const SignUp = () => {
   return (
@@ -13,40 +15,43 @@ const SignUp = () => {
               Create Your Account
             </h3>
             <div className="p-2 w-75">
-              <label htmlFor="name">Full Name</label>
-              <input
+              <TextInputField
+                label="Full Name"
                 name="name"
                 type="text"
-                className="custom-input d-block w-100 px-3 py-2 rounded"
-                id="name"
                 placeholder="John Doe"
                 style={{ border: "2px solid #8B2363" }}
+                inputHeight={45}
+                marginBottom={5}
                 required
               />
             </div>
 
             <div className="p-2 w-75">
-              <label htmlFor="email">Email</label>
-              <input
-                type="text"
+              <TextInputField
+                label="Email"
+                type="email"
                 className="custom-input d-block w-100 px-3 py-2 rounded"
-                id="email"
                 placeholder="Name@example.com"
                 style={{ border: "2px solid #8B2363" }}
+                inputHeight={45}
                 name="email"
+                marginBottom={5}
                 required
               />
             </div>
 
             <div className="p-2 w-75">
-              <label htmlFor="password">Password</label>
-              <input
+              <TextInputField
+                label="Password"
                 type="password"
                 className="custom-input d-block w-100 px-3 py-2 rounded"
                 id="password"
                 placeholder="Enter Your Secret Code"
                 style={{ border: "2px solid #8B2363" }}
                 name="password"
+                inputHeight={45}
+                marginBottom={5}
                 required
               />
             </div>
