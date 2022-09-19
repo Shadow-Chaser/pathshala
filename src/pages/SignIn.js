@@ -1,10 +1,50 @@
-import { TextInputField } from "evergreen-ui";
-import { Link } from "react-router-dom";
+import { Button, TextInputField, toaster } from "evergreen-ui";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signIn } from "../api/authAPI";
 import auth from "../assets/auth.svg";
+import { authenticate, isAuthenticated } from "../helpers/Auth";
 
 const SignIn = () => {
+  document.title = "Sign In";
+
+  const navigate = useNavigate();
+
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+    loading: false,
+  });
+
+  const { email, password, loading } = values;
+
+  const handleChange = (e) => {
+    const inputName = e.target.name;
+    const inputValue = e.target.value;
+    setValues({ ...values, [inputName]: inputValue });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setValues({ ...values, loading: true });
+
+    signIn({ email, password })
+      .then((res) => {
+        setValues({ ...values, loading: false });
+        res.status === 200 &&
+          toaster.success("Successfully logged in your account!", { duration: 4 });
+        authenticate(res.data.access_token);
+        isAuthenticated() && navigate("/");
+      })
+      .catch((err) => {
+        setValues({ ...values, loading: false });
+        const msg = err.response.data || err.message || "Something went wrong!";
+        toaster.danger(msg, { duration: 4 });
+      });
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div
         className="container py-5 d-flex justify-content-center align-items-center"
         style={{ minHeight: "100vh" }}>
@@ -25,6 +65,7 @@ const SignIn = () => {
                 name="email"
                 marginBottom={5}
                 required
+                onChange={handleChange}
               />
             </div>
 
@@ -40,11 +81,17 @@ const SignIn = () => {
                 inputHeight={45}
                 marginBottom={5}
                 required
+                onChange={handleChange}
               />
             </div>
-            <button className="btn-brand-outline w-50 py-3" style={{ border: "2px solid #8B2363" }}>
+            <Button
+              isLoading={loading}
+              type="submit"
+              height={56}
+              className="btn-brand-outline w-50 py-3"
+              style={{ border: "2px solid #8B2363" }}>
               Sign In
-            </button>
+            </Button>
             <div className="w-75 text-center py-3">
               <p>
                 Want to create an Account ? Please{" "}

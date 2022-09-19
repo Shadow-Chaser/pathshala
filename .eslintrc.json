@@ -38,6 +38,8 @@
     "react/button-has-type": "off",
     "react/prop-types": "off",
     "no-plusplus": "off",
+    "no-unneeded-ternary": 0,
+    "no-unused-expressions": 0,
     "react/jsx-filename-extension": [
       1,
       {

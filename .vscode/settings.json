@@ -11,5 +11,5 @@
     "source.organizeImports": true
   },
   "eslint.alwaysShowStatus": true,
-  "cSpell.words": ["Parens", "Pathshala", "plusplus", "signin"]
+  "cSpell.words": ["camelcase", "Parens", "Pathshala", "plusplus", "signin"]
 }

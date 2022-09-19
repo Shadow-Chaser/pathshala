@@ -1,11 +1,71 @@
-import { TextInputField } from "evergreen-ui";
-import { Link } from "react-router-dom";
+import { Button, TextInputField, toaster } from "evergreen-ui";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signUp } from "../api/authAPI";
 import auth from "../assets/auth.svg";
-// import { emailRegex, passRegex } from "../utils/Regex";
+import { emailRegex, passRegex } from "../utils/Regex";
 
 const SignUp = () => {
+  document.title = "Sign Up";
+  const navigate = useNavigate();
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+    loading: false,
+  });
+
+  const [errors, setErrors] = useState({ name: false, email: false, password: false });
+
+  // eslint-disable-next-line no-unused-vars
+  const { name, email, password, loading } = values;
+
+  const handleChange = (e) => {
+    const inputName = e.target.name;
+    const inputValue = e.target.value;
+    if (inputName === "email") {
+      if (!emailRegex.test(inputValue)) {
+        setErrors({
+          ...errors,
+          email: "This is not a valid email address!",
+        });
+      } else {
+        setValues({ ...values, email: inputValue });
+        setErrors({ ...errors, email: false });
+      }
+    } else if (inputName === "password") {
+      if (!passRegex.test(inputValue)) {
+        setErrors({
+          ...errors,
+          password:
+            "Password must be more than 8 chars combine with uppercase and lowercase, and at least one number",
+        });
+      } else {
+        setValues({ ...values, password: inputValue });
+        setErrors({ ...errors, password: false });
+      }
+    } else setValues({ ...values, name: inputValue });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setValues({ ...values, loading: true });
+
+    signUp({ name, email, password })
+      .then((res) => {
+        setValues({ ...values, loading: false });
+        toaster.success(res.data.message, { duration: 4 });
+        navigate("/signin");
+      })
+      .catch((err) => {
+        setValues({ ...values, loading: false });
+        const msg = err.response.data || err.message || "Something went wrong!";
+        toaster.danger(msg, { duration: 4 });
+      });
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div
         className="container py-5 d-flex justify-content-center align-items-center"
         style={{ minHeight: "100vh" }}>
@@ -23,6 +83,7 @@ const SignUp = () => {
                 style={{ border: "2px solid #8B2363" }}
                 inputHeight={45}
                 marginBottom={5}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -30,14 +91,15 @@ const SignUp = () => {
             <div className="p-2 w-75">
               <TextInputField
                 label="Email"
+                name="email"
                 type="email"
-                className="custom-input d-block w-100 px-3 py-2 rounded"
-                placeholder="Name@example.com"
+                placeholder="test@test.com"
                 style={{ border: "2px solid #8B2363" }}
                 inputHeight={45}
-                name="email"
                 marginBottom={5}
                 required
+                onChange={handleChange}
+                validationMessage={errors.email}
               />
             </div>
 
@@ -53,6 +115,8 @@ const SignUp = () => {
                 inputHeight={45}
                 marginBottom={5}
                 required
+                onChange={handleChange}
+                validationMessage={errors.password}
               />
             </div>
 
@@ -64,9 +128,14 @@ const SignUp = () => {
                 </Link>
               </span>
             </p>
-            <button className="btn-brand-outline w-50 py-3" style={{ border: "2px solid #8B2363" }}>
+            <Button
+              isLoading={loading}
+              type="submit"
+              className="btn-brand-outline w-50 py-3"
+              height={56}
+              style={{ border: "2px solid #8B2363" }}>
               Sign Up
-            </button>
+            </Button>
             <div className="w-75 text-center py-3">
               <p>
                 Have an Account ? Please{" "}
